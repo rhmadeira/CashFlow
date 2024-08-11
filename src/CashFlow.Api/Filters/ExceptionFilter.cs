@@ -11,7 +11,7 @@ public class ExceptionFilter : IExceptionFilter
     {
         if(context.Exception is CashFlowException)
         {
-            HandleProjectException(context)
+            HandleProjectException(context);
         }
         else
         {
