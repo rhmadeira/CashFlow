@@ -1,8 +1,8 @@
 ﻿
 
 using CashFlow.Application.UseCases.Expenses.Register;
-using CashFlow.Communication.Enums;
-using CashFlow.Communication.Requests;
+using CommonTestUtilities.Requests;
+using FluentAssertions;
 
 namespace Validator.Tests.Expenses.Register;
 
@@ -15,14 +15,7 @@ public class RegisterExpenseValidatorTests
         //Arrange - parte onde a gente prepara o ambiente para o teste
 
         var validator = new RegisterExpenseValidator();
-        var request = new RequestRegisterExpense
-        {
-            Description = "Teste",
-            Amount = 10,
-            Date = DateTime.Now.AddDays(-1), //Data de ontem
-            Title = "Teste",
-            PaymentType = PaymentType.CreditCard
-        };
+        var request = RequestRegisterExpenseBuilder.Build();
 
         //Act - Ação, executar o método que queremos testar
 
@@ -30,7 +23,6 @@ public class RegisterExpenseValidatorTests
 
         //Assert - Verificar se o resultado é o esperado
 
-        Assert.True(result.IsValid);
-
+        result.IsValid.Should().BeTrue();
     }
 }
