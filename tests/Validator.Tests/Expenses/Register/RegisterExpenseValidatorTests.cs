@@ -1,6 +1,7 @@
 ﻿
 
 using CashFlow.Application.UseCases.Expenses.Register;
+using CashFlow.Exception;
 using CommonTestUtilities.Requests;
 using FluentAssertions;
 
@@ -25,4 +26,21 @@ public class RegisterExpenseValidatorTests
 
         result.IsValid.Should().BeTrue();
     }
+
+    [Fact]
+    public void ErrorTitleEmpyt()
+    {
+
+        var validator = new RegisterExpenseValidator();
+        var request = RequestRegisterExpenseBuilder.Build();
+
+        request.Title = string.Empty;
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.TITLE_REQUIRED));
+
+    }
+
 }
