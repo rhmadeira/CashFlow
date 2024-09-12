@@ -1,6 +1,7 @@
 ﻿
 
 using CashFlow.Application.UseCases.Expenses.Register;
+using CashFlow.Communication.Enums;
 using CashFlow.Exception;
 using CommonTestUtilities.Requests;
 using FluentAssertions;
@@ -27,14 +28,17 @@ public class RegisterExpenseValidatorTests
         result.IsValid.Should().BeTrue();
     }
 
-    [Fact]
-    public void ErrorTitleEmpyt()
+    [Theory]
+    [InlineData("")]
+    [InlineData("     ")]
+    [InlineData(null)]
+    public void ErrorTitleEmpyt(string title)
     {
 
         var validator = new RegisterExpenseValidator();
         var request = RequestRegisterExpenseBuilder.Build();
 
-        request.Title = string.Empty;
+        request.Title = title;
 
         var result = validator.Validate(request);
 
@@ -43,4 +47,51 @@ public class RegisterExpenseValidatorTests
 
     }
 
+    [Fact]
+    public void ErrorDateFuture()
+    {
+
+        var validator = new RegisterExpenseValidator();
+        var request = RequestRegisterExpenseBuilder.Build();
+
+        request.Date = DateTime.Now.AddDays(1);
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.INVALIDE_DATE));
+
+    }
+
+    [Fact]
+    public void ErrorPaymentTypeInvalid()
+    {
+
+        var validator = new RegisterExpenseValidator();
+        var request = RequestRegisterExpenseBuilder.Build();
+
+        request.PaymentType = (PaymentType)700;
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.PAYMENT_TYPE_INVALIDE));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ErrorAmountInValid(decimal amount)
+    {
+
+        var validator = new RegisterExpenseValidator();
+        var request = RequestRegisterExpenseBuilder.Build();
+
+        request.Amount = amount;
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.AMOUNT_MUST_BE_GREATER_THAN_ZERO));
+    }
 }
