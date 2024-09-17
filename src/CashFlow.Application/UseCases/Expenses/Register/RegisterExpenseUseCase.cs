@@ -8,6 +8,7 @@ public class RegisterExpenseUseCase
     public ResponseRegisteredExpense Execute(RequestRegisterExpense request)
     {
         Validate(request);
+
         return new ResponseRegisteredExpense();
     }
     private void Validate(RequestRegisterExpense request)
