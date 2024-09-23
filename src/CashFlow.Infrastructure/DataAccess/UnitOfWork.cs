@@ -9,6 +9,6 @@ internal class UnitOfWork : IUnitOfWork
     {
       _cashFlowDbContext = cashFlowDbContext;
     }
-    public void Commit() => _cashFlowDbContext.SaveChanges();
+    public async Task Commit() => await _cashFlowDbContext.SaveChangesAsync();
     
 }
