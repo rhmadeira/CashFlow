@@ -9,13 +9,13 @@ using CashFlow.Exception.ExceptionBase;
 namespace CashFlow.Application.UseCases.Expenses.Register;
 public class RegisterExpenseUseCase : IRegisterExpenseUseCase
 {
-    private readonly IExpensesRepository _expensesRepository;
+    private readonly IExpensesWriteOnlyRepository _expensesWriteRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public RegisterExpenseUseCase(IExpensesRepository expensesRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public RegisterExpenseUseCase(IExpensesWriteOnlyRepository expensesRepository, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _expensesRepository = expensesRepository;
+        _expensesWriteRepository = expensesRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -26,7 +26,7 @@ public class RegisterExpenseUseCase : IRegisterExpenseUseCase
 
         var entity = _mapper.Map<Expense>(request);
 
-        await _expensesRepository.Add(entity);
+        await _expensesWriteRepository.Add(entity);
         await _unitOfWork.Commit();
 
         var response = _mapper.Map<ResponseRegisteredExpense>(entity);
