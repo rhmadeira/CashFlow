@@ -12,16 +12,30 @@ internal class ExpensesRepository : IExpensesReadOnlyRepository, IExpensesWriteO
         _dbContext = dbContext;
     }
 
+    async Task<Expense?> IExpensesReadOnlyRepository.GetById(long id)
+    {
+        var expense = await _dbContext.Expenses.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+
+        return expense;
+    }
+
+    async Task<Expense?> IExpensesWriteOnlyRepository.GetById(long id)
+    {
+        var expense = await _dbContext.Expenses.FirstOrDefaultAsync(e => e.Id == id);
+
+        return expense;
+    }
+
     public async Task Add(Expense expense)
     {
-            await _dbContext.Expenses.AddAsync(expense);
+        await _dbContext.Expenses.AddAsync(expense);
     }
 
     public async Task<bool> Delete(long id)
     {
         var result = await _dbContext.Expenses.FirstOrDefaultAsync(e => e.Id == id);
-        
-        if(result is null)
+
+        if (result is null)
         {
             return false;
         }
@@ -32,15 +46,13 @@ internal class ExpensesRepository : IExpensesReadOnlyRepository, IExpensesWriteO
 
     public async Task<List<Expense>> GetAll()
     {
-      var expenses =  await _dbContext.Expenses.AsNoTracking().ToListAsync();
-      
-      return expenses;
+        var expenses = await _dbContext.Expenses.AsNoTracking().ToListAsync();
+
+        return expenses;
     }
 
-    public async Task<Expense?> GetById(long id)
+    public void Update(Expense expense)
     {
-        var expense = await _dbContext.Expenses.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
-
-        return expense;
+        _dbContext.Expenses.Update(expense);
     }
 }

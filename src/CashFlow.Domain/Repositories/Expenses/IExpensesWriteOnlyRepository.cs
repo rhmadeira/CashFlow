@@ -12,4 +12,7 @@ public interface IExpensesWriteOnlyRepository
     /// <param name="expense"></param>
     /// <returns></returns>
     Task<bool> Delete(long id);
+
+    Task<Expense?> GetById(long id);
+    void Update(Expense expense);
 }
