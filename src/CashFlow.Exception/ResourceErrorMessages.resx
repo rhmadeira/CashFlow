@@ -135,4 +135,16 @@
   <data name="EXPENSE_NOT_FOUND" xml:space="preserve">
     <value>Expense not found</value>
   </data>
+  <data name="NAME_REQUIRED" xml:space="preserve">
+    <value>Name is not empty</value>
+  </data>
+  <data name="EMAIL_REQUIRED" xml:space="preserve">
+    <value>Email is not empty</value>
+  </data>
+  <data name="PASSWORD_REQUIRED" xml:space="preserve">
+    <value>Password is not empty</value>
+  </data>
+  <data name="INVALID_EMAIL" xml:space="preserve">
+    <value>Email is not valid</value>
+  </data>
 </root>
