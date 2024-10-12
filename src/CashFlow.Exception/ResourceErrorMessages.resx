@@ -147,4 +147,10 @@
   <data name="INVALID_EMAIL" xml:space="preserve">
     <value>Email is not valid</value>
   </data>
+  <data name="INVALID_PASSWORD" xml:space="preserve">
+    <value>The password must be 8-15 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character</value>
+  </data>
+  <data name="EMAIL_ALREADY_REGISTERED" xml:space="preserve">
+    <value>Email already registered</value>
+  </data>
 </root>
