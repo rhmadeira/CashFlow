@@ -4,6 +4,7 @@ using CashFlow.Communication.Responses.User;
 using CashFlow.Domain.Repositories;
 using CashFlow.Domain.Repositories.Users;
 using CashFlow.Domain.Security.Cryptography;
+using CashFlow.Domain.Security.Tokens;
 using CashFlow.Exception;
 using CashFlow.Exception.ExceptionBase;
 using FluentValidation.Results;
@@ -17,19 +18,22 @@ internal class RegisterUserUseCase : IRegisterUserUseCase
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAccessTokenGenerator _accessTokenGenerator;
 
     public RegisterUserUseCase(
         IMapper mapper,
         IPasswordEncripter passwordEncripter,
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteOnlyRepository userWriteOnlyRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IAccessTokenGenerator accessTokenGenerator)
     {
         _mapper = mapper;
         _passwordEncripter = passwordEncripter;
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteOnlyRepository = userWriteOnlyRepository;
         _unitOfWork = unitOfWork;
+        _accessTokenGenerator = accessTokenGenerator;
     }
 
     public async Task<ResponseRegisterUser> Execute(RequestRegisterUser request)
@@ -41,17 +45,18 @@ internal class RegisterUserUseCase : IRegisterUserUseCase
         user.UserIdentifier = Guid.NewGuid();
 
         await _userWriteOnlyRepository.AddUser(user);
-
         await _unitOfWork.Commit();
 
 
         return new ResponseRegisterUser
         {
             Name = user.Name,
+            Token = _accessTokenGenerator.Generate(user)
         };
     }
     private async Task Validate(RequestRegisterUser request)
     {
+
         var validator = new RegisterUserValidator();
         var result = validator.Validate(request);
 

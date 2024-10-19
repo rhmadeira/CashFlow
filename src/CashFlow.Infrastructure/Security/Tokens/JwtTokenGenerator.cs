@@ -24,15 +24,13 @@ public class JwtTokenGenerator : IAccessTokenGenerator
         {
             new Claim(ClaimTypes.Sid, user.UserIdentifier.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(_expirationTimeMinutes),
-            SigningCredentials = new SigningCredentials(GenerateSecurityKey(), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(GenerateSecurityKey(), SecurityAlgorithms.HmacSha256Signature),
+            Subject = new ClaimsIdentity(claims)
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
