@@ -6,11 +6,13 @@ using CashFlow.Application.UseCases.Expenses.Update;
 using CashFlow.Communication.Requests;
 using CashFlow.Communication.Responses;
 using CashFlow.Communication.Responses.Expense;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlow.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 
 public class ExpensesController : ControllerBase
 {
@@ -66,6 +68,7 @@ public class ExpensesController : ControllerBase
 
         return NoContent();
     }
+
     [HttpPut]
     [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
