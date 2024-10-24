@@ -16,7 +16,7 @@ public class RegisterUserValidator : AbstractValidator<RequestRegisterUser>
             .NotEmpty()
             .WithMessage(ResourceErrorMessages.EMAIL_REQUIRED)
             .EmailAddress()
-            .When(user => !string.IsNullOrEmpty(user.Email))
+            .When(user => string.IsNullOrWhiteSpace(user.Email) == false, ApplyConditionTo.CurrentValidator)
             .WithMessage(ResourceErrorMessages.INVALID_EMAIL);
 
         RuleFor(user => user.Password)

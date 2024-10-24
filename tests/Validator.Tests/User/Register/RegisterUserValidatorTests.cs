@@ -48,7 +48,33 @@ public class RegisterUserValidatorTests
         var result = validator.Validate(request);
 
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.NAME_REQUIRED));
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.EMAIL_REQUIRED));
+    }
+
+    [Fact]
+    public void Error_Email_Invalid()
+    {
+        var request = RequestRegisterUserBuilder.Build();
+        var validator = new RegisterUserValidator();
+        request.Email = "teste.com";
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.INVALID_EMAIL));
+    }
+
+    [Fact]
+    public void Error_Password_Empty()
+    {
+        var request = RequestRegisterUserBuilder.Build();
+        var validator = new RegisterUserValidator();
+        request.Password = string.Empty;
+
+        var result = validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle().And.Contain(x => x.ErrorMessage.Equals(ResourceErrorMessages.INVALID_PASSWORD));
     }
 
 }
