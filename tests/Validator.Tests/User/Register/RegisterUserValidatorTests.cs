@@ -22,7 +22,7 @@ public class RegisterUserValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData("     ")]
-    [InlineData(null)]
+    [InlineData(null)] 
     public void Error_Name_Empty(string name)
     {
         var request = RequestRegisterUserBuilder.Build();
