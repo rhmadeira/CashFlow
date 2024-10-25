@@ -11,7 +11,7 @@ using FluentValidation.Results;
 
 namespace CashFlow.Application.UseCases.User.Register;
 
-internal class RegisterUserUseCase : IRegisterUserUseCase
+public class RegisterUserUseCase : IRegisterUserUseCase
 {
     private readonly IMapper _mapper;
     private readonly IPasswordEncripter _passwordEncripter;
