@@ -1,5 +1,7 @@
 ﻿
 using CashFlow.Application.UseCases.User.Register;
+using CashFlow.Exception;
+using CashFlow.Exception.ExceptionBase;
 using CommonTestUtilities.Cryptography;
 using CommonTestUtilities.Mapper;
 using CommonTestUtilities.Repositories;
@@ -10,6 +12,7 @@ using FluentAssertions;
 namespace UseCases.Tests.Users.Register;
 public class RegisterUserUseCaseTest
 {
+
     [Fact]
     public async Task Sucess()
     {
@@ -22,6 +25,36 @@ public class RegisterUserUseCaseTest
         result.Name.Should().Be(request.Name);
         result.Token.Should().NotBeNullOrEmpty();
 
+    }
+
+    [Fact]
+    public async Task Error_Name_Empty()
+    {
+        var request = RequestRegisterUserBuilder.Build();
+        request.Name = string.Empty;
+
+        var useCase = CreateUseCase();
+
+        var act = async () => await useCase.Execute(request);
+
+        var result = await act.Should().ThrowAsync<ErrorOnValidationException>();
+
+        result.Where(ex => ex.GetErrors().Count == 1 && ex.GetErrors().Contains(ResourceErrorMessages.NAME_REQUIRED) );
+    }
+
+    [Fact]
+    public async Task Error_Email_Empty()
+    {
+        var request = RequestRegisterUserBuilder.Build();
+        request.Email = string.Empty;
+
+        var useCase = CreateUseCase();
+
+        var act = async () => await useCase.Execute(request);
+
+        var result = await act.Should().ThrowAsync<ErrorOnValidationException>();
+
+        result.Where(ex => ex.GetErrors().Count == 1 && ex.GetErrors().Contains(ResourceErrorMessages.EMAIL_REQUIRED));
     }
 
     private RegisterUserUseCase CreateUseCase()
