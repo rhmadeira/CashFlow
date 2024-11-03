@@ -9,6 +9,7 @@ namespace CashFlow.Application.UseCases.Expenses.Reports.Pdf;
 
 public class GenerateExpensesReportPdfUseCase : IGenerateExpensesReportPdfUseCase
 {
+    private const string CURRENCY_SYMBOL = "€";
     private readonly IExpensesReadOnlyRepository _expenseRepository;
 
     public GenerateExpensesReportPdfUseCase(IExpensesReadOnlyRepository expenseRepository)
@@ -19,14 +20,24 @@ public class GenerateExpensesReportPdfUseCase : IGenerateExpensesReportPdfUseCas
 
     public async Task<byte[]> Execute(DateOnly period)
     {
-       var exepenses = await _expenseRepository.GetByPeriod(period);
+        var exepenses = await _expenseRepository.GetByPeriod(period);
 
-        if(exepenses.Count == 0)
+        if (exepenses.Count == 0)
         {
             return [];
         }
 
         var document = CreateDocument(period);
+        var page = CreatePage(document);
+
+        Paragraph paragraph = page.AddParagraph();
+        var title = string.Format(ResourceReportGenerationMessages.TOTAL_SPENT_IN, period.ToString("Y"));
+
+        paragraph.AddFormattedText(title, new Font { Name = FontHelper.RALEWAY_REGULAR, Size = 15 });
+
+        paragraph.AddLineBreak();
+        var totalAmount = exepenses.Sum(ex => ex.Amount);
+        paragraph.AddFormattedText($"{totalAmount} {CURRENCY_SYMBOL}", new Font { Name = FontHelper.WORK_SANS_BLACK, Size = 50 });
 
         return [];
     }
@@ -41,5 +52,19 @@ public class GenerateExpensesReportPdfUseCase : IGenerateExpensesReportPdfUseCas
         style!.Font.Name = FontHelper.RALEWAY_REGULAR;
 
         return document;
+    }
+
+    private Section CreatePage(Document document)
+    {
+        var section = document.AddSection();
+        section.PageSetup = document.DefaultPageSetup.Clone();
+
+        section.PageSetup.PageFormat = PageFormat.A4;
+        section.PageSetup.LeftMargin = 40;
+        section.PageSetup.RightMargin = 40;
+        section.PageSetup.TopMargin = 80;
+        section.PageSetup.BottomMargin = 80;
+
+        return section;
     }
 }
