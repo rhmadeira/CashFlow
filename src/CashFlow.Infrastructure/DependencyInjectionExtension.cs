@@ -15,11 +15,13 @@ public static class DependencyInjectionExtension
 {
     public static void AddInfrastructure(this IServiceCollection service, IConfiguration configuration)
     {
+        service.AddScoped<IPasswordEncripter, Security.Cryptography.BCrypt>();
+        //service.AddScoped<ILoggedUser, LoggedUser>();
+
         AddDbContext(service, configuration);
         AddToken(service, configuration);
         AddRepositories(service);
 
-        service.AddScoped<IPasswordEncripter, Security.Cryptography.BCrypt>();
     }
 
     public static void AddToken(this IServiceCollection service, IConfiguration configuration)
@@ -42,9 +44,7 @@ public static class DependencyInjectionExtension
     {
         var connectionString = configuration.GetConnectionString("connection");
 
-        var version = new Version(8, 0, 39);
-        var serverVersion = new MySqlServerVersion(version);
-        //optionsBuilder.UseMySql(connectionString, serverVersion);
+        var serverVersion = ServerVersion.AutoDetect(connectionString);
 
         service.AddDbContext<CashFlowDbContext>(config => config.UseMySql(connectionString, serverVersion));
     } 

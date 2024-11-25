@@ -17,11 +17,14 @@ builder.Services.AddSwaggerGen(config =>
     config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Description = "JWT Authorization header using the Bearer scheme 'Bearer' [space] token",
+        Description = @"JWT Authorization header using the Bearer scheme.
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      Example: 'Bearer 12345abcdef'",
         In = ParameterLocation.Header,
         Scheme = "Bearer",
         Type = SecuritySchemeType.ApiKey
     });
+
     config.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -29,10 +32,10 @@ builder.Services.AddSwaggerGen(config =>
             {
                 Reference = new OpenApiReference
                 {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 },
-                Scheme = "auth2",
+                Scheme = "oauth2",
                 Name = "Bearer",
                 In = ParameterLocation.Header
             },
@@ -53,9 +56,9 @@ builder.Services.AddAuthentication(config =>
 {
     config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+}).AddJwtBearer(config =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    config.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = false,
         ValidateAudience = false,
